@@ -38,7 +38,7 @@ CONFIG = {
     # ── Data Centre Parameters ────────────────────────────────────────────────
     "it_capacity_kw":    500,    # Peak IT capacity (kW). 1 MW = 1000, 50 MW = 50000
     "pue":               1.4,    # Power Usage Effectiveness (1.2 modern → 2.0 old)
-    "base_utilization":  0.65,   # Baseline IT load as fraction of capacity (0–1)
+    "base_utilization":  0.65,   # Baseline IT load as fraction of capacity (0-1)
 
     # ── Output ────────────────────────────────────────────────────────────────
     "output_csv":   True,        # Save hourly data to CSV
@@ -170,7 +170,7 @@ def _build_normals(lat, lon, tz, n_years=10, ref_end=None) -> pd.DataFrame:
     if ref_end is None:
         ref_end = _CURRENT_YEAR - 1
     ref_start = ref_end - n_years + 1
-    print(f"[Weather] Building climatological normals ({ref_start}–{ref_end}) ...")
+    print(f"[Weather] Building climatological normals ({ref_start}-{ref_end}) ...")
 
     frames = []
     for yr in range(ref_start, ref_end + 1):
@@ -217,9 +217,9 @@ def fetch_temperature(city: str, year: int) -> tuple[pd.Series, str, dict]:
 
     Returns
     -------
-    series   : pd.Series  – hourly temperature indexed by datetime
-    mode     : str        – human-readable description of data source
-    city_info: dict       – geocoding metadata
+    series   : pd.Series  - hourly temperature indexed by datetime
+    mode     : str        - human-readable description of data source
+    city_info: dict       - geocoding metadata
     """
     city_info = geocode_city(city)
     lat, lon, tz = city_info["latitude"], city_info["longitude"], city_info["timezone"]
@@ -245,8 +245,8 @@ def fetch_temperature(city: str, year: int) -> tuple[pd.Series, str, dict]:
 
         series = pd.concat([actual, predicted]).sort_index()
         mode = (
-            f"Hybrid: ERA5 Jan 1–{yesterday.strftime('%b %d')}, "
-            f"predicted {_CURRENT_DATE.strftime('%b %d')}–Dec 31"
+            f"Hybrid: ERA5 Jan 1-{yesterday.strftime('%b %d')}, "
+            f"predicted {_CURRENT_DATE.strftime('%b %d')}-Dec 31"
         )
 
     else:
@@ -255,7 +255,7 @@ def fetch_temperature(city: str, year: int) -> tuple[pd.Series, str, dict]:
         series  = _sample_synthetic_year(normals, year)
         mode = (
             f"Predicted (climatological normals "
-            f"{_CURRENT_YEAR - 10}–{_CURRENT_YEAR - 1}, Gaussian sampling)"
+            f"{_CURRENT_YEAR - 10}-{_CURRENT_YEAR - 1}, Gaussian sampling)"
         )
 
     print(f"[Weather] Temperature data ready: {len(series):,} hourly records. Mode: {mode}")
@@ -294,9 +294,9 @@ class DataCenterModel:
     it_capacity_kw : float
         Maximum IT equipment capacity in kW.
     pue : float
-        Target Power Usage Effectiveness (1.2–2.0 typical).
+        Target Power Usage Effectiveness (1.2-2.0 typical).
     base_utilization : float
-        Baseline IT load fraction (0–1).
+        Baseline IT load fraction (0-1).
     """
 
     def __init__(self, it_capacity_kw=500, pue=1.4, base_utilization=0.65):
@@ -309,7 +309,7 @@ class DataCenterModel:
     # ── IT load ───────────────────────────────────────────────────────────────
 
     def generate_it_load(self, n_steps: int, timestep_hours: float) -> np.ndarray:
-        """Generate IT load profile with daily/weekly/random patterns (Eq. 2–7)."""
+        """Generate IT load profile with daily/weekly/random patterns (Eq. 2-7)."""
         time = np.arange(n_steps) * timestep_hours
 
         base   = self.base_utilization * np.ones(n_steps)
@@ -327,7 +327,7 @@ class DataCenterModel:
     def calculate_cooling_load(
         self, it_power_kw: np.ndarray, outdoor_temp_c: np.ndarray
     ) -> np.ndarray:
-        """Temperature-dependent cooling load (Eq. 8–11)."""
+        """Temperature-dependent cooling load (Eq. 8-11)."""
         base_cooling = it_power_kw * (self.pue - 1) * 0.8          # Eq. 8
         temp_factor  = 1.0 + 0.02 * (outdoor_temp_c - 15.0)        # Eq. 9
         temp_factor  = np.clip(temp_factor, 0.7, 1.5)               # Eq. 10
@@ -350,10 +350,10 @@ class DataCenterModel:
         ----------
         outdoor_temp_c : np.ndarray
             Outdoor temperature array already resampled to the target timestep.
-        city_name      : str   – location label for the datetime index start
-        year           : int   – simulation year
-        weather_mode   : str   – description of weather data source
-        timestep_hours : float – 1 or 0.5
+        city_name      : str   - location label for the datetime index start
+        year           : int   - simulation year
+        weather_mode   : str   - description of weather data source
+        timestep_hours : float - 1 or 0.5
         """
         n_steps = len(outdoor_temp_c)
         time    = np.arange(n_steps) * timestep_hours
@@ -502,9 +502,9 @@ def print_summary(df, dc, city_info, year, weather_mode, timestep_hours):
 def save_excel(df, dc, city_info, year, weather_mode, timestep_hours, output_dir):
     """
     Save results to a formatted Excel workbook with three sheets:
-      1. Metadata   – run configuration and summary statistics
-      2. Hourly Data – full time-series profile
-      3. Monthly Summary – monthly averages and totals
+      1. Metadata   - run configuration and summary statistics
+      2. Hourly Data - full time-series profile
+      3. Monthly Summary - monthly averages and totals
     """
     from openpyxl import load_workbook
     from openpyxl.styles import Font, PatternFill, Alignment, Border, Side

@@ -240,7 +240,7 @@ def build_climatological_normals(
     reference_start_year = reference_end_year - n_years + 1
     print(
         f"\n[2/4] Building climatological normals "
-        f"({reference_start_year}–{reference_end_year}, {n_years} years) ..."
+        f"({reference_start_year}-{reference_end_year}, {n_years} years) ..."
     )
 
     all_frames = []
@@ -402,8 +402,8 @@ def fetch_current_year_hybrid(
         ]
         combined = pd.concat([actual_df, predicted_slice]).sort_index()
         mode = (
-            f"Hybrid: actual data Jan 1–{yesterday.strftime('%b %d')}, "
-            f"predicted {remaining_start.strftime('%b %d')}–Dec 31"
+            f"Hybrid: actual data Jan 1-{yesterday.strftime('%b %d')}, "
+            f"predicted {remaining_start.strftime('%b %d')}-Dec 31"
         )
     else:
         combined = actual_df
@@ -562,7 +562,7 @@ def get_weather_data(
     city : str
         City name (e.g. "Tokyo", "New York", "Paris, France").
     year : int
-        Calendar year (1940–future).
+        Calendar year (1940-future).
     variables : list[str], optional
         List of Open-Meteo hourly variable names to retrieve.
         Defaults to DEFAULT_VARIABLES.
@@ -615,7 +615,7 @@ def get_weather_data(
         df = generate_predicted_year(normals, year, variables)
         mode = (
             f"Predicted (climatological normals from "
-            f"{CURRENT_YEAR - 10}–{CURRENT_YEAR - 1}, Gaussian sampling)"
+            f"{CURRENT_YEAR - 10}-{CURRENT_YEAR - 1}, Gaussian sampling)"
         )
 
     # ── Step 3: Post-process ─────────────────────────────────────────────────
@@ -652,7 +652,7 @@ def parse_args():
         "--year", "-y",
         type=int,
         required=True,
-        help="Calendar year (1940–future). Past → actual data; future → prediction.",
+        help="Calendar year (1940-future). Past → actual data; future → prediction.",
     )
     parser.add_argument(
         "--variables", "-v",
