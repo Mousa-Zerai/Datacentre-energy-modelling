@@ -1,4 +1,4 @@
-# Data centre Energy Modelling
+# DCEM — Data Centre Energy Model
 
 An open-source physics-based tool for simulating data centre power consumption and waste heat generation, developed as part of Virtual Heat Plant research at the University of Edinburgh.
 
